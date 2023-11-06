@@ -1,0 +1,21 @@
+name: Download and Run Python Script
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download Python script
+      run: wget https://abdullah.al-noman.workers.dev/0:/samsung_rom_extract_upload.py
+
+    - name: Install Python
+      run: sudo apt-get update -y && sudo apt-get install python3 -y
+
+    - name: Run Python script
+      run: python3 samsung_rom_extract_upload.py
