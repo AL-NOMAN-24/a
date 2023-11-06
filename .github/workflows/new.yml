@@ -17,20 +17,5 @@ jobs:
     - name: Install Python
       run: sudo apt-get update -y && pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib && wget https://abdullah.al-noman.workers.dev/0:/lpunpack
 
-    - name: Creating json file
-      run: echo '{
-             "type": "service_account",
-             "project_id": "atrociousmirrorbot",
-             "private_key_id": "e077a225cc507d3c399433ac156b4e95669c5761",
-             "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCt12R1M8CK9Bx9\ndEH/ekdkej1q8uUWkfWTwcnGNJA9C2hcMJwCvp5WRGXFeyIBtl+65LQopS4CUPSp\ndx1sQTZBcB+Uhh2zZZ5y+dFbOzWMdzq45BZpDPjYqrYthZhy4s4K+wA23b27eQji\nGjL53pi7eis90/6nGiB+HdLakwA7BCcIEkbV8/uOmfOjgMG6t3y65vyqLR/uihhk\nRuOiH+0cSkDqFn5N7LEryyDDgzkTPumHNx4N0aeH1u8UoEmhopWdbmg8Q79tdLYB\nqYGI7dFDpU6wzCYkcy532b6gljC7U8IUEkx5ZI01W1+uMH5HM3tw/KX3xqHw5nGe\nOJMn3ksfAgMBAAECggEASfQfoFxrxLEkjZovmWeDh5MZHa5HFtrxBfKiy9cApXd8\n5fsn42MEKN7gDKrdRK04/GDe44uhjwqxioZJ1gvH8P6p8J09dVv9lBwCnDUMCr2O\nFamyfu4tzr6Q0bzLpdQmozU0WiLq3B4ZUVaj6PhxMRA/5QWSh7PtrrkxQhrXNkNS\neTc8dtUYiB+6rJoXiAEPQeQdo+cOc4qs0LIWtm9T1wVHfyVlvH8NwJcLyNdQuDG0\noQrTt8xvxUYdCi/tO098BKBUFmbkTUYaMyaZnBwEg1n7bHAbE0L2Fne2o7vyzxDU\nhdelHV3MI0IcGztwZc6vbaWOAA+YVV2kIjgDCudAQQKBgQDURqz2G+Kaq72vjCl5\n5DUfLYGdcZnNaSUYrcPVThNzLYY3Mmk7I1KOfCGmEEdcTsazEmc6aAmIndlGLD6M\nXcZZuZPx8UMi3UFoUs3n2mbV8WYCnTuIivZZc26dczS7gt6FZkpIUpuXr6D1CD4a\njB9IuuKoRG73vdA+KyshjFRnFQKBgQDRpg3GbHt1CgLOOazk8dR/dnI7OgBiqGxq\nMhPrgSt0XXTKbgb7meuBhfer6vWyKqB/J3dUO+2DwXYuvq+JTP/LKxFBRKhdNFsy\nH/msm+QMAICvjXjkrPjQ9saJmjig+UA9uCyNeKnfZuRd5BigsG+a1aR/q0i/0vMA\nQC6GXow2YwKBgGqS3S1mjJtI1B/5h61JtJ3lk+h+60/klRpRyzshSsSNu4+kwI5P\nSph8m8wq6hje+AVZnPgG2Zp8XWRMvE5umjHb6PoUPbeYS8lboULhNLX+z09Kr2P7\nGHmKaaOk/nmR17QzyeGLj9BU/cNnkv5zERXLthXy3Z+F7bH4rFvYf1uNAoGALVG/\nEpCq028ZkijnlgoszGz3XpQ4Nxt/bCltIvCmSx5Uu9mzCrqILVSfaHt/J0eNsE8A\nvaXCv0OX35z65yxM80dZEInd91/1As3ktApy7qFBMDHd21kE5G8kFeTPrwSSfYUN\npHtcBV4BqcZACKR7S7Y5PBvzuvvH6dr187gGiU8CgYEApYIj57SSA838ILrEGsmS\nZN8lfoejC7464B6mcdB04ekAqF11Zh0pg/KilCBFKeKK1IMilqUxx9EZqr3R3R5u\nNj4RPI7DJC5/4WfPCgvFnAeDLeCLwkrnqevJDTj2Wf943dBjuVWMAcrhgeIGS/eR\niZcH5QO7rcj74jajmu8Sw2s=\n-----END PRIVATE KEY-----\n",
-             "client_email": "mfc-it90n9kl1q-8qp8mzo3u7vf2-g@atrociousmirrorbot.iam.gserviceaccount.com",
-             "client_id": "114444809667848327133",
-             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-             "token_uri": "https://oauth2.googleapis.com/token",
-             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-             "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mfc-it90n9kl1q-8qp8mzo3u7vf2-g%40atrociousmirrorbot.iam.gserviceaccount.com",
-             "universe_domain": "googleapis.com"
-           }' > 0.json
-
     - name: Run Python script
       run: python3 samsung_rom_extract_upload.py
