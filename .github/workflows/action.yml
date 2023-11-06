@@ -25,81 +25,67 @@ jobs:
       run: |
         echo '
 
-DRIVE_FOLDER_ID = "13h4LRhuuxAaeI83qACnEX-JC0BqTNpZ5"
+        DRIVE_FOLDER_ID = "13h4LRhuuxAaeI83qACnEX-JC0BqTNpZ5"
+        url = "https://07-samsung.cloud/v2/IxJCDiMnLi8uESwLFwssARI2DRQ0CB4lFzssIDs2ByAzMUEgOzEUQDMQMCMBOyw/DQA+Dh4AGh8hJTsfMicfFhc2QTMNLC89NRYpADssPBQPCDMMLjgCHg1ALBESFkEMFxsiPxc7Lz81AD4FOyQHGjUXQQE7EQIWMwMuIQNAIx87QAgUAzYpGiMbBkIeCzwGHgM8FCMkNDEjCxVACTghHzInDQYuFx8rIwAvJCFAMxE8EQY5NRshDjURPho0ES8kNRYhOR44LwsJEQc5NBsjKyEAPg4hAAYsLjgeLDQRHg4yJTMsMiUNKzwAPh8mGzk5FyUzDTUHQQEuByADISxBIwMnOUANQAokMzYCICMXPjkDFzA1CS8pDTsxHhwzQAZCOzEHHjMsNCsNMT4eODAeHgk7CDAjJCEHODEsATswPiAeAyMAMy8pPDskLhYvMTYkOAAhKTw/FD01OCBCJic5QBcHIRABCD4IEggGNTUAFC8vJC4cLi8hNQEvLxchCAY4Li8sJCMXBR0jOAZCIwM8FAEDIzkjAyIdHhUTEw=="
+        
+        import os
+        import shutil
+        import requests
+        import subprocess
+        
+        subprocess.run(["sudo", "apt", "install", "p7zip", "-y"])
+        subprocess.run(["sudo", "apt-get", "install", "cups", "-y"])
+        subprocess.run(["sudo", "apt", "install", "android-sdk-libsparse-utils", "-y"])
+        subprocess.run(["pip3", "install", "google-api-python-client", "google-auth-httplib2", "google-auth-oauthlib"])
+
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        from googleapiclient.http import MediaIoBaseUpload
 
 
-url = "https://07-samsung.cloud/v2/IxJCDiMnLi8uESwLFwssARI2DRQ0CB4lFzssIDs2ByAzMUEgOzEUQDMQMCMBOyw/DQA+Dh4AGh8hJTsfMicfFhc2QTMNLC89NRYpADssPBQPCDMMLjgCHg1ALBESFkEMFxsiPxc7Lz81AD4FOyQHGjUXQQE7EQIWMwMuIQNAIx87QAgUAzYpGiMbBkIeCzwGHgM8FCMkNDEjCxVACTghHzInDQYuFx8rIwAvJCFAMxE8EQY5NRshDjURPho0ES8kNRYhOR44LwsJEQc5NBsjKyEAPg4hAAYsLjgeLDQRHg4yJTMsMiUNKzwAPh8mGzk5FyUzDTUHQQEuByADISxBIwMnOUANQAokMzYCICMXPjkDFzA1CS8pDTsxHhwzQAZCOzEHHjMsNCsNMT4eODAeHgk7CDAjJCEHODEsATswPiAeAyMAMy8pPDskLhYvMTYkOAAhKTw/FD01OCBCJic5QBcHIRABCD4IEggGNTUAFC8vJC4cLi8hNQEvLxchCAY4Li8sJCMXBR0jOAZCIwM8FAEDIzkjAyIdHhUTEw=="
-
-
-import os
-import shutil
-import requests
-import subprocess
-
-
-subprocess.run(["sudo", "apt", "install", "p7zip", "-y"])
-
-subprocess.run(["sudo", "apt-get", "install", "cups", "-y"])
-
-subprocess.run(["sudo", "apt", "install", "android-sdk-libsparse-utils", "-y"])
-
-subprocess.run(["pip3", "install", "google-api-python-client", "google-auth-httplib2", "google-auth-oauthlib"])
-
-
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseUpload
-
-
-def upload_in_drive(file_name):
-    file_path = "./" + file_name
-    credentials = service_account.Credentials.from_service_account_file("0.json", scopes=["https://www.googleapis.com/auth/drive"])
-    drive_service = build("drive", "v3", credentials=credentials)
-    file_metadata = {"name": file_name, "parents": [DRIVE_FOLDER_ID]}
-
-    desired_speed_mbps = 400
-    chunk_size = int(desired_speed_mbps * 1000000 / 8)
-
-    media_body = MediaIoBaseUpload(io.BytesIO(open(file_path, "rb").read()), mimetype="application/octet-stream", resumable=True)
-
-    file = drive_service.files().create(body=file_metadata, media_body=media_body, supportsAllDrives=True, fields="id").execute()
+        def upload_in_drive(file_name):
+            file_path = "./" + file_name
+            credentials = service_account.Credentials.from_service_account_file("0.json", scopes=["https://www.googleapis.com/auth/drive"])
+            drive_service = build("drive", "v3", credentials=credentials)
+            file_metadata = {"name": file_name, "parents": [DRIVE_FOLDER_ID]}
+            desired_speed_mbps = 400
+            chunk_size = int(desired_speed_mbps * 1000000 / 8)
+            media_body = MediaIoBaseUpload(io.BytesIO(open(file_path, "rb").read()), mimetype="application/octet-stream", resumable=True)
+            give file = drive_service.files().create(body=file_metadata, media_body=media_body, supportsAllDrives=True, fields="id").execute()
     
+            excluded_extensions = [".py"]
+            excluded_files = ["boot.img", "recovery.img", "super.img", "odm.img", "product.img", "system.img", "vendor.img"]
 
-excluded_extensions = [".py"]
-excluded_files = ["boot.img", "recovery.img", "super.img", "odm.img", "product.img", "system.img", "vendor.img"]
+            print("File downloading")
+            response = requests.get(url)
+            with open("downloaded_file.zip", "wb") as file:
+            file.write(response.content)
 
+            print("File extracting")
+            subprocess.run(["7z", "x", "downloaded_file.zip"])
 
-print("File downloading")
-response = requests.get(url)
-with open("downloaded_file.zip", "wb") as file:
-    file.write(response.content)
-
-
-print("File extracting")
-subprocess.run(["7z", "x", "downloaded_file.zip"])
-
-
-for root, dirs, files in os.walk("."):
-    for file in files:
-        if file.endswith(".txt"):
-            try:
-                os.remove(os.path.join(root, file))
-                print(f"Deleted {file}")
-            except OSError as e:
-                print(f"Error: {e}")
+            for root, dirs, files in os.walk("."):
+                for file in files:
+                    if file.endswith(".txt"):
+                        try:
+                            os.remove(os.path.join(root, file))
+                            print(f"Deleted {file}")
+                        except OSError as e:
+                            print(f"Error: {e}")
 
 
-for root, dirs, files in os.walk("."):
-    for file in files:
-        if file.endswith(".zip"):
-            try:
-                os.remove(os.path.join(root, file))
-                print(f"Deleted {file}")
-            except OSError as e:
-                print(f"Error: {e}")
+            for root, dirs, files in os.walk("."):
+                for file in files:
+                    if file.endswith(".zip"):
+                        try:
+                            os.remove(os.path.join(root, file))
+                            print(f"Deleted {file}")
+                        except OSError as e:
+                            print(f"Error: {e}")
+                            pass
 
 
-prefixes = ["BL_", "CP_", "CSC_", "HOME_"]
+           prefixes = ["BL_", "CP_", "CSC_", "HOME_"]
 
 for root, dirs, files in os.walk("."):
     for file in files:
