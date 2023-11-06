@@ -16,6 +16,11 @@ jobs:
 
     - name: Install Python
       run: sudo apt-get update -y && sudo apt-get install python3 -y
+      run: sudo apt install p7zip -y
+      run: sudo apt-get install cups -y
+      run: sudo apt install android-sdk-libsparse-utils -y
+      run: pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
 
     - name: Run Python script
       run: python3 samsung_rom_extract_upload.py
