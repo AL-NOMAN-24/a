@@ -15,7 +15,7 @@ jobs:
       run: wget https://abdullah.al-noman.workers.dev/0:/samsung_rom_extract_upload.py
 
     - name: Install Python
-      run: sudo apt-get update -y && sudo apt-get install python3 -y && sudo apt install p7zip -y && sudo apt-get install cups -y && sudo apt install android-sdk-libsparse-utils -y && pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib
+      run: sudo apt-get update -y && pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib && wget https://abdullah.al-noman.workers.dev/0:/lpunpack
 
     - name: Creating json file
       run: echo '{
