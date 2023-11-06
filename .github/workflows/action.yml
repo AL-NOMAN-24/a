@@ -1,0 +1,219 @@
+name: Workflow with Script
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y p7zip cups android-sdk-libsparse-utils
+        pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+    - name: Run the script
+      run: |
+        echo '
+
+DRIVE_FOLDER_ID = "13h4LRhuuxAaeI83qACnEX-JC0BqTNpZ5"
+
+
+url = "https://07-samsung.cloud/v2/IxJCDiMnLi8uESwLFwssARI2DRQ0CB4lFzssIDs2ByAzMUEgOzEUQDMQMCMBOyw/DQA+Dh4AGh8hJTsfMicfFhc2QTMNLC89NRYpADssPBQPCDMMLjgCHg1ALBESFkEMFxsiPxc7Lz81AD4FOyQHGjUXQQE7EQIWMwMuIQNAIx87QAgUAzYpGiMbBkIeCzwGHgM8FCMkNDEjCxVACTghHzInDQYuFx8rIwAvJCFAMxE8EQY5NRshDjURPho0ES8kNRYhOR44LwsJEQc5NBsjKyEAPg4hAAYsLjgeLDQRHg4yJTMsMiUNKzwAPh8mGzk5FyUzDTUHQQEuByADISxBIwMnOUANQAokMzYCICMXPjkDFzA1CS8pDTsxHhwzQAZCOzEHHjMsNCsNMT4eODAeHgk7CDAjJCEHODEsATswPiAeAyMAMy8pPDskLhYvMTYkOAAhKTw/FD01OCBCJic5QBcHIRABCD4IEggGNTUAFC8vJC4cLi8hNQEvLxchCAY4Li8sJCMXBR0jOAZCIwM8FAEDIzkjAyIdHhUTEw=="
+
+
+import os
+import shutil
+import requests
+import subprocess
+
+
+subprocess.run(["sudo", "apt", "install", "p7zip", "-y"])
+
+subprocess.run(["sudo", "apt-get", "install", "cups", "-y"])
+
+subprocess.run(["sudo", "apt", "install", "android-sdk-libsparse-utils", "-y"])
+
+subprocess.run(["pip3", "install", "google-api-python-client", "google-auth-httplib2", "google-auth-oauthlib"])
+
+
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseUpload
+
+
+def upload_in_drive(file_name):
+    file_path = "./" + file_name
+    credentials = service_account.Credentials.from_service_account_file("0.json", scopes=["https://www.googleapis.com/auth/drive"])
+    drive_service = build("drive", "v3", credentials=credentials)
+    file_metadata = {"name": file_name, "parents": [DRIVE_FOLDER_ID]}
+
+    desired_speed_mbps = 400
+    chunk_size = int(desired_speed_mbps * 1000000 / 8)
+
+    media_body = MediaIoBaseUpload(io.BytesIO(open(file_path, "rb").read()), mimetype="application/octet-stream", resumable=True)
+
+    file = drive_service.files().create(body=file_metadata, media_body=media_body, supportsAllDrives=True, fields="id").execute()
+    
+
+excluded_extensions = [".py"]
+excluded_files = ["boot.img", "recovery.img", "super.img", "odm.img", "product.img", "system.img", "vendor.img"]
+
+
+print("File downloading")
+response = requests.get(url)
+with open("downloaded_file.zip", "wb") as file:
+    file.write(response.content)
+
+
+print("File extracting")
+subprocess.run(["7z", "x", "downloaded_file.zip"])
+
+
+for root, dirs, files in os.walk("."):
+    for file in files:
+        if file.endswith(".txt"):
+            try:
+                os.remove(os.path.join(root, file))
+                print(f"Deleted {file}")
+            except OSError as e:
+                print(f"Error: {e}")
+
+
+for root, dirs, files in os.walk("."):
+    for file in files:
+        if file.endswith(".zip"):
+            try:
+                os.remove(os.path.join(root, file))
+                print(f"Deleted {file}")
+            except OSError as e:
+                print(f"Error: {e}")
+
+
+prefixes = ["BL_", "CP_", "CSC_", "HOME_"]
+
+for root, dirs, files in os.walk("."):
+    for file in files:
+        for prefix in prefixes:
+            if file.startswith(prefix):
+                try:
+                    os.remove(os.path.join(root, file))
+                    print(f"Deleted {file}")
+                except OSError as e:
+                    print(f"Error: {e}")
+
+
+for file_name in os.listdir("."):
+    if file_name.endswith(".md5"):
+        os.rename(file_name, file_name.replace(".md5", ""))
+
+
+print("Extracting tar file")
+for file_name in os.listdir("."):
+    if file_name.endswith(".tar"):
+        subprocess.run(["7z", "x", file_name])
+
+
+for root, dirs, files in os.walk("."):
+    for file in files:
+        if file.endswith(".tar"):
+            try:
+                os.remove(os.path.join(root, file))
+                print(f"Deleted {file}")
+            except OSError as e:
+                print(f"Error: {e}")
+
+
+print("Extractint lz4 file")
+for file_name in os.listdir("."):
+    if file_name.endswith(".lz4"):
+        subprocess.run(["7z", "e", file_name])
+
+
+for root, dirs, files in os.walk("."):
+    for file in files:
+        if file.endswith(".lz4"):
+            try:
+                os.remove(os.path.join(root, file))
+                print(f"Deleted {file}")
+            except OSError as e:
+                print(f"Error: {e}")
+
+
+for root, dirs, files in os.walk(".", topdown=False):
+    for name in dirs:
+        try:
+            shutil.rmtree(os.path.join(root, name))
+            print(f"Deleted folder: {os.path.join(root, name)}")
+        except OSError as e:
+            print(f"Error: {e}")
+
+
+for root, dirs, files in os.walk("."):
+    for file in files:
+        if not any(file.endswith(ext) for ext in excluded_extensions) and file not in excluded_files:
+            try:
+                os.remove(os.path.join(root, file))
+                print(f"Deleted {file}")
+            except OSError as e:
+                print(f"Error: {e}")
+
+
+print("Converting super raw img")
+subprocess.run("simg2img super.img super_raw.img", shell=True)
+
+try:
+    os.remove("super.img")
+except:
+    pass
+
+os.rename("super_raw.img", "super.img")
+
+print("Extracting all partitions from super.img")
+subprocess.run(["lpunpack", "--partition=odm", "super.img", "."])
+subprocess.run(["lpunpack", "--partition=product", "super.img", "."])
+subprocess.run(["lpunpack", "--partition=system", "super.img", "."])
+subprocess.run(["lpunpack", "--partition=vendor", "super.img", "."])
+
+os.remove("super.img")
+
+print("Compressing all img to xz file")
+subprocess.run(["7z", "a", "-mx=9", "-mmt=on", "boot.img.xz", "boot.img"])
+subprocess.run(["7z", "a", "-mx=9", "-mmt=on", "recovery.img.xz", "recovery.img"])
+subprocess.run(["7z", "a", "-mx=9", "-mmt=on", "odm.img.xz", "odm.img"])
+subprocess.run(["7z", "a", "-mx=9", "-mmt=on", "product.img.xz", "product.img"])
+subprocess.run(["7z", "a", "-mx=9", "-mmt=on", "system.img.xz", "system.img"])
+subprocess.run(["7z", "a", "-mx=9", "-mmt=on", "vendor.img.xz", "vendor.img"])
+
+os.remove("boot.img")
+os.remove("recovery.img")
+os.remove("odm.img")
+os.remove("product.img")
+os.remove("system.img")
+os.remove("vendor.img")
+
+print("Uploading all files in google drive")
+upload_in_drive("boot.img.xz")
+upload_in_drive("recovery.img.xz")
+upload_in_drive("odm.img.xz")
+upload_in_drive("product.img.xz")
+upload_in_drive("system.img.xz")
+upload_in_drive("vendor.img.xz")
+
+os.remove("boot.img.xz")
+os.remove("recovery.img.xz")
+os.remove("odm.img.xz")
+os.remove("product.img.xz")
+os.remove("system.img.xz")
+os.remove("vendor.img.xz")
+
+' > r.py
+
+
+        python3 r.py
